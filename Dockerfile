@@ -18,14 +18,15 @@ RUN \
     net-tools \
     netcat \
     sudo \
-    unzip
+    unzip \
+    python3
 
 # Install Rust
 ENV RUSTUP_HOME=/home/coder/bin/rustup
 ENV CARGO_HOME=/home/coder/bin/cargo
 RUN curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
-ENV PATH=$PATH:/home/coder/bin/cargo/bin  
-ENV PATH=$PATH:/home/coder/bin/rustup/bin  
+ENV PATH=$PATH:/home/root/bin/cargo/bin  
+ENV PATH=$PATH:/home/root/bin/rustup/bin  
 
 # Install nvm
 ENV NVM_DIR /usr/local/nvm
@@ -44,11 +45,15 @@ RUN apt-get update && apt-get install -y yarn
 
 # install oh-my-zsh
 # Default powerline10k theme, no plugins installed
-RUN sh -c "$(wget -O- https://github.com/deluan/zsh-in-docker/releases/download/v1.1.5/zsh-in-docker.sh)"
+RUN rm -rf /home/$USER/.oh-my-zsh && echo "Y" | sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
+
 
 #install bun
-RUN curl -fsSL https://bun.sh/install | bash
-
+RUN curl -fsSL https://bun.sh/install | bash && \
+  ln -s $HOME/.bun/bin/bun /usr/local/bin/bun
+# RUN curl -fsSL https://bun.sh/install | bash
+# ENV BUN_INSTALL "/home/root/.bun"
+# ENV PATH "$BUN_INSTALL/bin:$PATH"
 # Install Go
 # copied from https://github.com/cdr/enterprise-images/blob/main/images/golang/Dockerfile.ubuntu
 # Install go1.17.1
