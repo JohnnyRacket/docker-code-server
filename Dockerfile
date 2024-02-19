@@ -94,9 +94,9 @@ rm -rf \
 
 
 # install oh-my-zsh
-RUN chsh -s /bin/zsh abc
-RUN rm -rf /home/$USER/.oh-my-zsh && echo "Y" | sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
 
+RUN rm -rf /home/$USER/.oh-my-zsh && echo "Y" | sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
+RUN chsh -s /bin/zsh abc
 RUN chsh -s /bin/bash root
 # add local files
 COPY /root /
