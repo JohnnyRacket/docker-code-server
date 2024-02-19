@@ -22,11 +22,7 @@ fi
 [[ ! -f /config/.profile ]] && \
     cp /root/.profile /config/.profile
 [[ ! -f /config/.zshrc ]] && \
-    cp /root/.zshrc /config/.zshrc
-[[ ! -f /config/.zshenv ]] && \
-    cp /root/.zshenv /config/.zshenv
-[[ ! -f /config/.zsh_history ]] && \
-    cp /root/.zsh_history /config/.zsh_history
+    cp /usr/temp/zsh/.zshrc  /config/
 
 # fix permissions (ignore contents of /config/workspace)
 find /config -path /config/workspace -prune -o -exec chown abc:abc {} +

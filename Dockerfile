@@ -99,6 +99,8 @@ ENV ZSH /usr/local/zsh
 RUN sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" "" --unattended
 # RUN rm -rf /home/$USER/.oh-my-zsh && echo "Y" | sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
 RUN chsh -s /bin/bash root
+RUN mkdir -p /usr/temp/zsh
+RUN cp ~/.zshrc /usr/temp/zsh/
 # add local files
 COPY /root /
 
