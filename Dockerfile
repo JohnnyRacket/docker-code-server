@@ -6,6 +6,9 @@ ARG CODE_RELEASE=4.21.1
 # environment settings
 ARG DEBIAN_FRONTEND="noninteractive"
 ENV HOME="/config"
+ENV PGID=1000
+ENV PUID=1000
+ENV TZ=America/Chicago
 
 RUN \
   echo "**** install runtime dependencies ****" && \
@@ -19,14 +22,15 @@ RUN \
     netcat \
     sudo \
     unzip \
-    python3
+    python3 \
+    zsh
 
 # Install Rust
 ENV RUSTUP_HOME=/home/coder/bin/rustup
 ENV CARGO_HOME=/home/coder/bin/cargo
 RUN curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
-ENV PATH=$PATH:/home/root/bin/cargo/bin  
-ENV PATH=$PATH:/home/root/bin/rustup/bin  
+ENV PATH=$PATH:/home/coder/bin/cargo/bin  
+ENV PATH=$PATH:/home/coder/bin/rustup/bin  
 
 # Install nvm
 ENV NVM_DIR /usr/local/nvm
@@ -43,17 +47,16 @@ RUN echo "deb https://dl.yarnpkg.com/debian/ stable main" | \
 tee /etc/apt/sources.list.d/yarn.list
 RUN apt-get update && apt-get install -y yarn
 
-# install oh-my-zsh
-# Default powerline10k theme, no plugins installed
-RUN rm -rf /home/$USER/.oh-my-zsh && echo "Y" | sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
 
 
 #install bun
-RUN curl -fsSL https://bun.sh/install | bash && \
-  ln -s $HOME/.bun/bin/bun /usr/local/bin/bun
-# RUN curl -fsSL https://bun.sh/install | bash
-# ENV BUN_INSTALL "/home/root/.bun"
-# ENV PATH "$BUN_INSTALL/bin:$PATH"
+ENV BUN_DIR /usr/local/bun
+RUN mkdir -p /usr/local/bun
+RUN curl -fsSL https://bun.sh/install | bash
+RUN cp -r ~/.bun/. $BUN_DIR/
+ENV BUN_PATH $BUN_DIR/bin
+ENV PATH $BUN_PATH:$PATH
+
 # Install Go
 # copied from https://github.com/cdr/enterprise-images/blob/main/images/golang/Dockerfile.ubuntu
 # Install go1.17.1
@@ -66,7 +69,7 @@ RUN curl -fsSL https://get.docker.com | sh
 ENV GOROOT /usr/local/go
 ENV PATH $PATH:$GOROOT/bin
 
-ENV GOPATH /home/root/go
+ENV GOPATH /home/coder/go
 ENV GOBIN $GOPATH/bin
 ENV PATH $PATH:$GOBIN
 
@@ -89,6 +92,12 @@ rm -rf \
   /var/lib/apt/lists/* \
   /var/tmp/*
 
+
+# install oh-my-zsh
+RUN chsh -s /bin/zsh abc
+RUN rm -rf /home/$USER/.oh-my-zsh && echo "Y" | sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
+
+RUN chsh -s /bin/bash root
 # add local files
 COPY /root /
 
